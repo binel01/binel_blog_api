@@ -1,11 +1,25 @@
 from django.db import models
-from django.db.models.fields import CharField
-from django.db.models.fields.reverse_related import ManyToOneRel
 from django.utils.translation import gettext as _
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class CustomUser(AbstractUser):
+    """
+    Model used to customize the user model to login with email address
+    """
+    
+    class Meta:
+        verbose_name = _("customuser")
+        verbose_name_plural = _("customusers")
+
+    def __str__(self):
+        return self.username
+
+    def get_absolute_url(self):
+        return reverse("customuser-detail", kwargs={"pk": self.pk})
+
+
 class Category(models.Model):
     """
     Model used to store categories of posts
@@ -22,7 +36,7 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("category_detail", kwargs={"pk": self.pk})
+        return reverse("category-detail", kwargs={"pk": self.pk})
 
 
 class Post(models.Model):
@@ -33,7 +47,7 @@ class Post(models.Model):
     content = models.TextField(_("Content"))
     cover_image = models.ImageField(_("Image"), upload_to="uploads")
     category = models.ForeignKey(Category, verbose_name=_("Category"), on_delete=models.CASCADE)
-    user = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, verbose_name=_("Author"), on_delete=models.CASCADE)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
@@ -44,7 +58,7 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("post_detail", kwargs={"pk": self.pk})
+        return reverse("post-detail", kwargs={"pk": self.pk})
 
 
 class Comment(models.Model):
@@ -53,7 +67,7 @@ class Comment(models.Model):
     """
     content = models.CharField(_("Content"), max_length=150)
     post = models.ForeignKey(Post, verbose_name=_("Post"), on_delete=models.CASCADE)
-    user = models.ForeignKey(User, verbose_name=_("User"), on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, verbose_name=_("User"), on_delete=models.CASCADE)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
@@ -64,5 +78,5 @@ class Comment(models.Model):
         return self.content
 
     def get_absolute_url(self):
-        return reverse("comment_detail", kwargs={"pk": self.pk})
+        return reverse("comment-detail", kwargs={"pk": self.pk})
 

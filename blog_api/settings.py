@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    'rest_framework',
     'content',
 ]
 
@@ -125,3 +126,14 @@ STATIC_URL = '/static/'
 # Media files (images, PDF, Txt)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# rest_framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+# Set the new User Model
+AUTH_USER_MODEL = 'content.CustomUser'
